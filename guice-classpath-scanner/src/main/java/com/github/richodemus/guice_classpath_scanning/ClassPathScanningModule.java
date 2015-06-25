@@ -6,21 +6,30 @@ import org.reflections.scanners.SubTypesScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.StringJoiner;
+
 public class ClassPathScanningModule extends AbstractModule {
     final Logger logger = LoggerFactory.getLogger(getClass());
-    private final String classPath;
+    final private Reflections reflections;
 
     public ClassPathScanningModule(final String classPath) {
-
-        this.classPath = classPath;
+        reflections = new Reflections(classPath, new SubTypesScanner(false));
     }
 
     @Override
     protected void configure() {
-        Reflections reflections = new Reflections(classPath, new SubTypesScanner(false));
-        reflections.getAllTypes().forEach(System.out::println);
+        reflections.getAllTypes().stream()
+                .map(this::stringToClass)
+                .filter(this::onlyInterfaces)
+                .map(this::findImplementationForInterface)
+                .forEach(pair -> bind(pair.getTheInterface()).to(pair.getTheClass()));
+    }
 
-        reflections.getAllTypes().stream().map(this::stringToClass);
+    private boolean onlyInterfaces(Class aClass) {
+        return aClass.isInterface();
     }
 
     private Class stringToClass(String className) {
@@ -31,4 +40,22 @@ public class ClassPathScanningModule extends AbstractModule {
             throw new IllegalStateException(e);
         }
     }
+
+    private InterfaceAndImplementation findImplementationForInterface(Class theInterface) {
+        final Set<Class> implementations = reflections.getSubTypesOf(theInterface);
+
+        final List<Class> classes = new ArrayList<>();
+        classes.addAll(implementations);
+
+        if (classes.size() > 1) {
+            final StringJoiner joiner = new StringJoiner(",", "{", "}");
+            classes.stream().map(Class::getName).forEach(joiner::add);
+
+            logger.error("Found more than 1 implementation for [{}]: {}", theInterface.getClass().getName(), joiner.toString());
+            throw new IllegalStateException("Found more than 1 implementation for " + theInterface.getClass().getName() + ": " + joiner.toString());
+        }
+
+        return new InterfaceAndImplementation(theInterface, classes.get(0));
+    }
+
 }
