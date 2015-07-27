@@ -6,6 +6,7 @@ import org.reflections.scanners.SubTypesScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -23,13 +24,13 @@ public class ClassPathScanningModule extends AbstractModule {
     protected void configure() {
         reflections.getAllTypes().stream()
                 .map(this::stringToClass)
-                .filter(this::onlyInterfaces)
+                .filter(this::onlyInterfacesAndAbstractClasses)
                 .map(this::findImplementationForInterface)
                 .forEach(pair -> bind(pair.getTheInterface()).to(pair.getTheClass()));
     }
 
-    private boolean onlyInterfaces(Class aClass) {
-        return aClass.isInterface();
+    private boolean onlyInterfacesAndAbstractClasses(Class aClass) {
+        return aClass.isInterface() || Modifier.isAbstract(aClass.getModifiers());
     }
 
     private Class stringToClass(String className) {
