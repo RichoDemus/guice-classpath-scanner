@@ -1,4 +1,4 @@
-package com.github.richodemus.guice_classpath_scanning.test.scan_here;
+package com.github.richodemus.guice_classpath_scanning.test.abstract_class_with_impl;
 
 public class TestAbstractClassImpl  extends TestAbstractClass
 {

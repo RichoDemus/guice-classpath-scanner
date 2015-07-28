@@ -49,6 +49,7 @@ public class ClassPathScanningModule extends AbstractModule {
         final List<Class> classes = new ArrayList<>();
         classes.addAll(implementations);
 
+        //Todo: should call bind multiple times instead, to let guice handle this scenario and then rename the test
         if (classes.size() > 1) {
             final StringJoiner joiner = new StringJoiner(",", "{", "}");
             classes.stream().map(Class::getName).forEach(joiner::add);
