@@ -2,6 +2,8 @@ package com.github.richodemus.guice_classpath_scanning;
 
 import com.github.richodemus.guice_classpath_scanning.test.scan_here.TestAbstractClass;
 import com.github.richodemus.guice_classpath_scanning.test.scan_here.TestInterface;
+import com.github.richodemus.guice_classpath_scanning.test.scan_here.TestInterfaceWithoutImplementation;
+import com.google.inject.ConfigurationException;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import org.junit.Assert;
@@ -26,5 +28,12 @@ public class ClassPathScanningModuleTest {
 
         Assert.assertNotNull(instance);
         Assert.assertEquals("bar", instance.foo());
+    }
+
+    @Test(expected = ConfigurationException.class)
+    public void shouldGetOriginalGuiceExceptionIfNoImplementationFound() throws Exception {
+        final Injector injector = Guice.createInjector(new ClassPathScanningModule("com.github.richodemus.guice_classpath_scanning.test.scan_here"));
+
+        final TestInterfaceWithoutImplementation instance = injector.getInstance(TestInterfaceWithoutImplementation.class);
     }
 }

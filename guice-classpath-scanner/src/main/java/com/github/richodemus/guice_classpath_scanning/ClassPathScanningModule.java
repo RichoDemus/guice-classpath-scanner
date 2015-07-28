@@ -26,6 +26,7 @@ public class ClassPathScanningModule extends AbstractModule {
                 .map(this::stringToClass)
                 .filter(this::onlyInterfacesAndAbstractClasses)
                 .map(this::findImplementationForInterface)
+                .filter(obj -> obj != null)
                 .forEach(pair -> bind(pair.getTheInterface()).to(pair.getTheClass()));
     }
 
@@ -54,6 +55,11 @@ public class ClassPathScanningModule extends AbstractModule {
 
             logger.error("Found more than 1 implementation for [{}]: {}", theInterface.getClass().getName(), joiner.toString());
             throw new IllegalStateException("Found more than 1 implementation for " + theInterface.getClass().getName() + ": " + joiner.toString());
+        }
+
+        if (classes.size() == 0) {
+            //TODO this should be made nicer
+            return null;
         }
 
         return new InterfaceAndImplementation(theInterface, classes.get(0));
