@@ -39,7 +39,7 @@ public class ClassPathScanningModuleTest {
     }
 
     @Test(expected = CreationException.class)
-    public void shouldThrowExceptionIfMultipleImplementationsAreFound() throws Exception {
+    public void shouldGetOriginalGuiceExceptionIfMultipleImplementationsAreFound() throws Exception {
         final Injector injector = Guice.createInjector(new ClassPathScanningModule("com.github.richodemus.guice_classpath_scanning.test.interface_with_two_implementations"));
 
         final TestInterfaceWithoutImplementation instance = injector.getInstance(TestInterfaceWithoutImplementation.class);

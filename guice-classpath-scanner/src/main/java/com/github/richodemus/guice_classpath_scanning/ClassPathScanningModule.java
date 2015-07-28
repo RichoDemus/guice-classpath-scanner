@@ -7,10 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.StringJoiner;
 
 public class ClassPathScanningModule extends AbstractModule {
     final Logger logger = LoggerFactory.getLogger(getClass());
@@ -26,8 +22,7 @@ public class ClassPathScanningModule extends AbstractModule {
                 .map(this::stringToClass)
                 .filter(this::onlyInterfacesAndAbstractClasses)
                 .map(this::findImplementationForInterface)
-                .filter(obj -> obj != null)
-                .forEach(pair -> bind(pair.getTheInterface()).to(pair.getTheClass()));
+                .forEach(this::bindInterfaceToImplementation);
     }
 
     private boolean onlyInterfacesAndAbstractClasses(Class aClass) {
@@ -43,27 +38,15 @@ public class ClassPathScanningModule extends AbstractModule {
         }
     }
 
-    private InterfaceAndImplementation findImplementationForInterface(Class theInterface) {
-        final Set<Class> implementations = reflections.getSubTypesOf(theInterface);
-
-        final List<Class> classes = new ArrayList<>();
-        classes.addAll(implementations);
-
-        //Todo: should call bind multiple times instead, to let guice handle this scenario and then rename the test
-        if (classes.size() > 1) {
-            final StringJoiner joiner = new StringJoiner(",", "{", "}");
-            classes.stream().map(Class::getName).forEach(joiner::add);
-
-            logger.error("Found more than 1 implementation for [{}]: {}", theInterface.getClass().getName(), joiner.toString());
-            throw new IllegalStateException("Found more than 1 implementation for " + theInterface.getClass().getName() + ": " + joiner.toString());
-        }
-
-        if (classes.size() == 0) {
-            //TODO this should be made nicer
-            return null;
-        }
-
-        return new InterfaceAndImplementation(theInterface, classes.get(0));
+    private InterfaceAndImplementations findImplementationForInterface(Class theInterface) {
+        return new InterfaceAndImplementations(theInterface, reflections.getSubTypesOf(theInterface));
     }
 
+    /**
+     * If there are more more than 1 implementation Guice will complain, this is intentional because we want an interface to have only 1 implementation
+     * @param holder
+     */
+    private void bindInterfaceToImplementation(InterfaceAndImplementations holder) {
+        holder.getTheImplementations().forEach(impl -> bind(holder.getTheInterface()).to(impl));
+    }
 }
