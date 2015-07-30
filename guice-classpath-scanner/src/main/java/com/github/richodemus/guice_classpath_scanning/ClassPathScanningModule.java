@@ -1,11 +1,14 @@
 package com.github.richodemus.guice_classpath_scanning;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.name.Names;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Named;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Modifier;
 
 public class ClassPathScanningModule extends AbstractModule {
@@ -44,9 +47,22 @@ public class ClassPathScanningModule extends AbstractModule {
 
     /**
      * If there are more more than 1 implementation Guice will complain, this is intentional because we want an interface to have only 1 implementation
+     *
      * @param holder
      */
     private void bindInterfaceToImplementation(InterfaceAndImplementations holder) {
-        holder.getTheImplementations().forEach(impl -> bind(holder.getTheInterface()).to(impl));
+        //todo refactor this, maybe have two different streams in configure, one for named and one for unnamed..
+        holder.getTheImplementations().forEach(impl -> {
+            final Annotation annotation = impl.getAnnotation(Named.class);
+            if (annotation == null) {
+                logger.debug("binding {} to {}", holder.getTheInterface().getSimpleName(), impl.getSimpleName());
+                bind(holder.getTheInterface()).to(impl);
+                return;
+            }
+            final Named namedAnnotation = (Named) annotation;
+            final String name = namedAnnotation.value();
+            logger.debug("binding {} named {} to {}", holder.getTheInterface().getSimpleName(), name, impl.getSimpleName());
+            bind(holder.getTheInterface()).annotatedWith(Names.named(name)).to(impl);
+        });
     }
 }
