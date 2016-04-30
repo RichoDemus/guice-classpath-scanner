@@ -5,7 +5,7 @@ An attempt at getting classpath scanning in Guice
 ### Maven
     <dependency>
       <groupId>com.github.RichoDemus.guice-classpath-scanning</groupId>
-      <artifactId>examples</artifactId>
+      <artifactId>guice-classpath-scanner</artifactId>
       <version>prerelease</version>
     </dependency>
     
