@@ -48,7 +48,7 @@ uploadArchives {
             }
 
             pom.project {
-                name 'Example Application'
+                name 'Guice Classpath Scanner'
                 packaging 'jar'
                 // optionally artifactId can be defined here
                 description 'A simple classpath scanner for Guice'
