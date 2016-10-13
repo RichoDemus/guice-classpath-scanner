@@ -21,3 +21,19 @@ An attempt at getting classpath scanning in Guice
     
 ### Code
     Guice.createInjector(new ClassPathScanningModule("com.yourpackage"));
+    
+## Development
+
+### Building
+    ./gradlew
+    
+### Signing and uploading
+You'll need a gradle.properties with the following contents
+```
+signing.keyId=24875D73
+signing.password=secret
+signing.secretKeyRingFile=/Users/me/.gnupg/secring.gpg
+
+ossrhUsername=your-jira-id
+ossrhPassword=your-jira-password
+```
