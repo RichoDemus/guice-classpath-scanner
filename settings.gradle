@@ -1,0 +1,3 @@
+rootProject.name = 'guice-classpath-scanning-parent'
+include 'examples'
+include 'guice-classpath-scanner'

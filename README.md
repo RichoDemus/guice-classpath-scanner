@@ -1,6 +1,9 @@
 # guice-classpath-scanning
 An attempt at getting classpath scanning in Guice
 
+## Finding outdated dependencies
+    ./gradlew dependencyUpdates
+
 ## Using
 ### Maven
     <dependency>

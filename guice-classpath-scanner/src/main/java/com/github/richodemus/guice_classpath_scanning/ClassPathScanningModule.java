@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Named;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Modifier;
+import java.util.Set;
 
 public class ClassPathScanningModule extends AbstractModule {
     final Logger logger = LoggerFactory.getLogger(getClass());
@@ -42,7 +43,7 @@ public class ClassPathScanningModule extends AbstractModule {
     }
 
     private InterfaceAndImplementations findImplementationForInterface(Class theInterface) {
-        return new InterfaceAndImplementations(theInterface, reflections.getSubTypesOf(theInterface));
+        return new InterfaceAndImplementations(theInterface, (Set<Class>)reflections.getSubTypesOf(theInterface));
     }
 
     /**
