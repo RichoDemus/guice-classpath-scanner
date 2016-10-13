@@ -1,9 +1,6 @@
 # guice-classpath-scanning
 An attempt at getting classpath scanning in Guice
 
-## Finding outdated dependencies
-    ./gradlew dependencyUpdates
-
 ## Using
 ### Maven
     <dependency>
@@ -27,6 +24,9 @@ An attempt at getting classpath scanning in Guice
 ### Building
     ./gradlew
     
+## Finding outdated dependencies
+    ./gradlew dependencyUpdates
+    
 ### Signing and uploading
 You'll need a gradle.properties with the following contents
 ```
@@ -37,3 +37,6 @@ signing.secretKeyRingFile=/Users/me/.gnupg/secring.gpg
 ossrhUsername=your-jira-id
 ossrhPassword=your-jira-password
 ```
+and then run
+
+    ./gradlew uploadArchives
