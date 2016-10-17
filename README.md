@@ -1,4 +1,5 @@
 # guice-classpath-scanning
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.richodemus.scanner/guice-classpath-scanner/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.richodemus.scanner/guice-classpath-scanner)  
 An attempt at getting classpath scanning in Guice
 
 ## Using
