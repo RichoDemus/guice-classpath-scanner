@@ -23,7 +23,7 @@ compile 'com.richodemus.scanner:guice-classpath-scanner:1.0.0'
 ### Building
     ./gradlew
     
-## Finding outdated dependencies
+### Finding outdated dependencies
     ./gradlew dependencyUpdates
     
 ### Signing and uploading
